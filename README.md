@@ -10,7 +10,17 @@ Screenshots captured layout/UI and gameplay of the SnakeGame on PC.
     <td align="center"><img src="https://i.postimg.cc/CLZtyyrT/snakegameexam.png" width="1280" height="720" alt="SnakeGame" />
 </tr>
 
-## Run immediately
+## Run immediately (no build tools required)
+
+The repository now includes a prebuilt Windows executable at the project root. After downloading **Code → Download ZIP** and extracting it, open PowerShell in the extracted folder and run:
+
+```powershell
+.\SnakeGame.exe
+```
+
+Keep the `assets` folder beside `SnakeGame.exe`. This method does not require CMake, MinGW, or Visual Studio Code.
+
+## Build from source
 
 The GitHub **Code → Download ZIP** archive contains the source code, not the generated `build` folder or `.exe` file. After extracting it, install CMake 3.20+ and MinGW-w64, then build once with the helper script:
 
