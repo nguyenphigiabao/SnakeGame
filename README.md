@@ -7,7 +7,7 @@ Native game for Windows 10/11, designed to match the reference image: an 808 × 
 Screenshots captured layout/UI and gameplay of the SnakeGame on PC.
 
 <tr>
-    <td align="center"><img src="https://i.postimg.cc/CLZtyyrT/snakegameexam.png" width="808" height="808" alt="SnakeGame" />
+    <td align="center"><img src="https://i.postimg.cc/CLZtyyrT/snakegameexam.png" width="1280" height="720" alt="SnakeGame" />
 </tr>
 
 ## Run immediately
