@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "Debug Snake Game",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/build/bin/SnakeGame.exe",
+    "cwd": "${workspaceFolder}",
+    "MIMode": "gdb",
+    "miDebuggerPath": "gdb.exe",
+    "preLaunchTask": "Build",
+    "externalConsole": false,
+    "setupCommands": [{"text": "-enable-pretty-printing", "ignoreFailures": true}]
+  }]
+}

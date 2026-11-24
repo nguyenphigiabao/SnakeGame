@@ -1,0 +1,12 @@
+{
+  "version": 4,
+  "configurations": [{
+    "name": "Windows MinGW",
+    "compilerPath": "g++.exe",
+    "intelliSenseMode": "windows-gcc-x64",
+    "cppStandard": "c++17",
+    "cStandard": "c11",
+    "includePath": ["${workspaceFolder}/include", "${workspaceFolder}/build/_deps/raylib-src/src"],
+    "compileCommands": "${workspaceFolder}/build/compile_commands.json"
+  }]
+}

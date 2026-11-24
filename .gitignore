@@ -1,0 +1,6 @@
+/build/
+/.tools/
+/highscore.txt
+/highscore.txt.tmp
+*.exe
+*.dll

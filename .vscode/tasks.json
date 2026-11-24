@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Configure",
+      "type": "process",
+      "command": "${workspaceFolder}/.tools/cmake-3.31.6-windows-x86_64/bin/cmake.exe",
+      "args": ["-S", ".", "-B", "build", "-G", "MinGW Makefiles", "-DCMAKE_BUILD_TYPE=Debug"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Build",
+      "type": "process",
+      "command": "${workspaceFolder}/.tools/cmake-3.31.6-windows-x86_64/bin/cmake.exe",
+      "args": ["--build", "build", "--config", "Debug", "-j", "4"],
+      "dependsOn": "Configure",
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Test",
+      "type": "process",
+      "command": "${workspaceFolder}/.tools/cmake-3.31.6-windows-x86_64/bin/ctest.exe",
+      "args": ["--test-dir", "build", "--output-on-failure"],
+      "dependsOn": "Build",
+      "problemMatcher": []
+    }
+  ]
+}
