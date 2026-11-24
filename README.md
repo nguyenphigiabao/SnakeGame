@@ -7,24 +7,31 @@ Native game for Windows 10/11, designed to match the reference image: an 808 × 
 Screenshots captured layout/UI and gameplay of the SnakeGame on PC.
 
 <tr>
-    <td align="center"><img src="https://i.postimg.cc/CLZtyyrT/snakegameexam.png" width="808" height="808" alt="SnakeGame" />
+    <td align="center"><img src="https://i.postimg.cc/CLZtyyrT/snakegameexam.png" width="1280" height="720" alt="SnakeGame" />
 </tr>
 
 ## Run immediately
 
-Open a PowerShell terminal in the project directory:
+The GitHub **Code → Download ZIP** archive contains the source code, not the generated `build` folder or `.exe` file. After extracting it, install CMake 3.20+ and MinGW-w64, then build once with the helper script:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\build.ps1
+```
+
+Then run the generated executable:
 
 ```powershell
 .\build\bin\SnakeGame.exe
 ```
 
-The executable has already been built in this workspace. Keep the `assets` folder next to the executable when copying the game elsewhere. If the font is missing, the game falls back to the default font; audio is synthesized in memory and requires no sound files.
+If PowerShell reports that script execution is disabled, the `Set-ExecutionPolicy` command above enables scripts only for the current terminal. Keep the `assets` folder next to the executable when copying the game elsewhere. If the font is missing, the game falls back to the default font; audio is synthesized in memory and requires no sound files.
 
 ## Build
 
 Verified environment: Windows, MinGW-w64 GCC 8.1.0 provided by CodeBlocks, and portable CMake 3.31.6 in `.tools`. The system PATH is not modified. The VS Code configuration uses `g++.exe` and `gdb.exe` from the machine PATH.
 
-Add CMake to the PATH **for the current terminal only**:
+You can also build manually. Add CMake to the PATH **for the current terminal only**:
 
 ```powershell
 $env:Path = "$PWD\.tools\cmake-3.31.6-windows-x86_64\bin;$env:Path"
