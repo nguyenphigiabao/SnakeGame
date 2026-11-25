@@ -7,12 +7,12 @@ enum class MoveResult { Moved, Ate, Collision, Victory };
 struct Snake {
     std::array<Cell, cfg::Capacity> cells{}, previous{};
     int length = 3;
-    Direction direction = Direction::Right, previousDirection = Direction::Right;
-    std::array<Direction, 3> turns{};
+    Direction direction = Direction::Right;
+    std::array<Direction, 2> turns{};
     int turnCount = 0;
     void Reset();
     bool Occupies(Cell c, int count = -1) const;
     void Queue(Direction next);
     MoveResult Step(Cell apple);
 };
-void DrawSnake(const Snake& snake, float alpha);
+void DrawSnake(const Snake& snake, float alpha, float facingAngle);

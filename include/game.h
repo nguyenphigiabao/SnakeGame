@@ -27,6 +27,7 @@ private:
     std::mt19937 random{std::random_device{}()};
     std::string scorePath;
     float accumulator=0, step=cfg::InitialStep, renderAlpha=1;
+    float facingAngle=0;
     int windowWidth=cfg::Width,windowHeight=cfg::Height;
     Vector2 windowPosition{};
     bool recordCelebrated=false;

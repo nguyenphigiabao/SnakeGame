@@ -77,7 +77,7 @@ The Pause screen provides Resume and Restart. Game Over and Victory provide Play
 
 ## Gameplay and animation
 
-- Logic uses `std::array<Cell, 255>` with **1-based** coordinates and a direction queue of up to three inputs. Each tick consumes one direction, and an immediate 180-degree reversal is rejected.
+- Logic uses `std::array<Cell, 255>` with **1-based** coordinates. The head starts rotating as soon as a turn is registered. The body turns at the next cell boundary. One more turn can be buffered for a quick second corner, and a newer legal follow-up replaces it. Direct 180-degree reversals are rejected.
 - The initial tick interval is 0.155 seconds, reduced by 0.0025 seconds per point and capped at 0.075 seconds. Rendering targets 120 FPS with VSync.
 - Previous and current positions are stored for every segment and interpolated between ticks. The head and eyes rotate along the shortest arc, while thick lines and round joints create a continuous body. A new tail segment starts at the old tail position to prevent a visual jump during growth.
 - The canvas is rendered at 2× resolution and downsampled for smoother curves. Shapes use Raylib primitives and require no sprite images.

@@ -12,7 +12,7 @@ Cell DirectionDelta(Direction d) {
 }
 void Snake::Reset() {
     length = 3; turnCount = 0;
-    direction = previousDirection = Direction::Right;
+    direction = Direction::Right;
     cells[0] = {4,8}; cells[1] = {3,8}; cells[2] = {2,8};
     previous = cells;
 }
@@ -22,9 +22,14 @@ bool Snake::Occupies(Cell c, int count) const {
     return false;
 }
 void Snake::Queue(Direction next) {
-    Direction last = turnCount ? turns[turnCount-1] : direction;
+    // Keep the imminent turn. A newer legal follow-up can replace the second.
+    Direction last = turnCount ? turns[0] : direction;
     if (next == last || (static_cast<int>(next)+2)%4 == static_cast<int>(last)) return;
-    if (turnCount < static_cast<int>(turns.size())) turns[turnCount++] = next;
+    if (turnCount == 0) turns[turnCount++] = next;
+    else {
+        turns[1] = next;
+        turnCount = 2;
+    }
 }
 MoveResult Snake::Step(Cell apple) {
     Direction nextDirection = turnCount ? turns[0] : direction;
@@ -34,7 +39,6 @@ MoveResult Snake::Step(Cell apple) {
     // On a normal move the old tail is vacated in the same tick.
     if (!Inside(next) || Occupies(next, length - (eating ? 0 : 1))) return MoveResult::Collision;
     previous = cells;
-    previousDirection = direction;
     direction = nextDirection;
     if (turnCount) {
         for (int i=1; i<turnCount; ++i) turns[i-1] = turns[i];
@@ -49,7 +53,7 @@ MoveResult Snake::Step(Cell apple) {
     if (length == cfg::Capacity) return MoveResult::Victory;
     return eating ? MoveResult::Ate : MoveResult::Moved;
 }
-void DrawSnake(const Snake& s, float alpha) {
+void DrawSnake(const Snake& s, float alpha, float facingAngle) {
     alpha = std::clamp(alpha, 0.0f, 1.0f);
     std::array<Vector2, cfg::Capacity> points{};
     for (int i=0; i<s.length; ++i) {
@@ -68,11 +72,7 @@ void DrawSnake(const Snake& s, float alpha) {
     }
     Vector2 head=points[0];
     DrawCircleV(head,cfg::Radius+1,cfg::Head);
-    float a=static_cast<int>(s.previousDirection)*PI/2;
-    float b=static_cast<int>(s.direction)*PI/2;
-    float difference=std::atan2(std::sin(b-a), std::cos(b-a));
-    float angle=a+difference*(alpha*alpha*(3-2*alpha));
-    Vector2 forward{std::cos(angle),std::sin(angle)}, side{-forward.y,forward.x};
+    Vector2 forward{std::cos(facingAngle),std::sin(facingAngle)}, side{-forward.y,forward.x};
     auto local = [&](float x,float y) {return Vector2{head.x+forward.x*x+side.x*y,head.y+forward.y*x+side.y*y};};
     for (float sign : {-1.0f,1.0f}) {
         DrawCircleV(local(-3,sign*15.5f),13,cfg::Eye);

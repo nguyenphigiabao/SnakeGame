@@ -30,6 +30,19 @@ int main() {
         check(ExportImage(image,file),file);UnloadImage(image);
     };
     frames(30);capture("ready.png");
+    // Raylib 5.5 automation event type 2 is INPUT_KEY_DOWN. Feed the normal
+    // keyboard path and advance one frame at 120 Hz.
+    PlayAutomationEvent({0,2,{KEY_UP}});
+    game.Update(1.0f/120,{-100,-100});
+    check(game.state==State::PLAYING&&game.snake.cells[0]==Cell{4,7},
+          "first arrow starts movement in the input frame");
+    PlayAutomationEvent({0,2,{KEY_LEFT}});
+    game.Update(1.0f/120,{-100,-100});
+    check(game.snake.turnCount==1&&game.snake.turns[0]==Direction::Left,
+          "next arrow is registered between ticks");
+    frames(17);
+    check(game.snake.cells[0]==Cell{3,7},"buffered corner executes at the next boundary");
+    game.Reset();
     game.apple={5,8};game.Start();frames(25);
     check(game.score==1&&game.snake.length==4,"eat, grow, score during fixed updates");
     game.Handle(Action::Pause);Cell head=game.snake.cells[0];frames(30);

@@ -7,6 +7,7 @@ constexpr int Capacity = Columns * Rows;
 constexpr int BoardX = 30, BoardY = 117;
 constexpr float Radius = CellSize * 0.4f;
 constexpr float InitialStep = 0.155f, MinimumStep = 0.075f;
+constexpr float HeadTurnRate = PI / (2 * 0.05f); // Quarter turn in 50 ms.
 constexpr Color HudColor{69,110,40,255}, Border{87,138,52,255};
 constexpr Color Light{170,215,81,255}, Dark{162,209,73,255};
 constexpr Color Body{67,110,232,255}, Head{75,120,245,255};

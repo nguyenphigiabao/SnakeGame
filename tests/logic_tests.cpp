@@ -12,8 +12,8 @@ int main() {
     Snake s; s.Reset();
     Check(s.length==3&&s.cells[0]==Cell{4,8},"initial snake");
     s.Queue(Direction::Left); Check(s.turnCount==0,"reject reversal");
-    s.Queue(Direction::Up); s.Queue(Direction::Left); s.Queue(Direction::Down); s.Queue(Direction::Right);
-    Check(s.turnCount==3,"bounded input queue");
+    s.Queue(Direction::Up); s.Queue(Direction::Right); s.Queue(Direction::Left); s.Queue(Direction::Down);
+    Check(s.turnCount==2,"keep the imminent turn and latest legal follow-up");
     Check(s.Step({17,15})==MoveResult::Moved&&s.cells[0]==Cell{4,7},"one queued turn per tick");
     Check(s.Step({17,15})==MoveResult::Moved&&s.cells[0]==Cell{3,7},"preserve rapid turn order");
     s.Reset(); Check(s.Step({5,8})==MoveResult::Ate&&s.length==4,"growth");

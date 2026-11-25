@@ -1,5 +1,6 @@
 #include "game.h"
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <fstream>
 #ifdef _WIN32
@@ -36,10 +37,15 @@ void Game::Init(const std::string& path) {
 void Game::SetState(State next) { state=next; ui.overlayAge=0; }
 void Game::Reset() {
     snake.Reset(); apple={13,8}; score=0; accumulator=0; renderAlpha=1;
-    step=cfg::InitialStep; effects={}; recordCelebrated=false; SetState(State::READY);
+    step=cfg::InitialStep; facingAngle=0; effects={}; recordCelebrated=false; SetState(State::READY);
 }
 void Game::Start() {
-    if(state==State::READY) {SetState(State::PLAYING); audio.Play(Cue::Start);}
+    if(state==State::READY) {
+        // The first frame can already interpolate away from the starting cell.
+        accumulator=step;
+        SetState(State::PLAYING);
+        audio.Play(Cue::Start);
+    }
 }
 void Game::ToggleFullscreenMode() {
     if(!IsWindowFullscreen()) {
@@ -120,7 +126,16 @@ void Game::Update(float dt,Vector2 mouse,bool handleInput) {
         accumulator-=step; Tick();
         step=std::max(cfg::MinimumStep,cfg::InitialStep-score*0.0025f);
     }
-    if(state==State::PLAYING) renderAlpha=std::clamp(accumulator/step,0.0f,1.0f);
+    if(state==State::PLAYING) {
+        renderAlpha=std::clamp(accumulator/step,0.0f,1.0f);
+        // Show the turn as soon as input arrives. Body and collision checks
+        // still follow cell boundaries at the original movement speed.
+        Direction facing=snake.turnCount ? snake.turns[0] : snake.direction;
+        float target=static_cast<int>(facing)*PI/2;
+        float difference=std::remainder(target-facingAngle,2*PI);
+        float maxRotation=dt*cfg::HeadTurnRate;
+        facingAngle=std::remainder(facingAngle+std::clamp(difference,-maxRotation,maxRotation),2*PI);
+    }
 }
 void Game::Draw() const {
     DrawBoard();
@@ -128,7 +143,7 @@ void Game::Draw() const {
         float t=std::clamp(effects.appleAge/0.22f,0.0f,1.0f);
         DrawApple(Center(apple),1-(1-t)*(1-t)*(1-t));
     }
-    DrawSnake(snake,renderAlpha); effects.Draw();
+    DrawSnake(snake,renderAlpha,facingAngle); effects.Draw();
     ui.DrawHud(score,best,effects.scorePulse,audio.muted);
     ui.DrawOverlay(state,score,best);
 }
