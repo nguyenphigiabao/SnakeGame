@@ -10,13 +10,17 @@ class Game {
 public:
     Snake snake;
     Cell apple{13,8};
-    State state=State::READY;
-    int score=0, best=0;
+    State state=State::MENU;
+    Mode mode=Mode::Hard;
+    int score=0, best=0, lives=1;
     bool quit=false;
     void Init(const std::string& scoreFile);
     void Reset();
     void Start();
     void Handle(Action action);
+    void SelectMode(Mode next);
+    void OpenMenu();
+    int MaxLives() const { return mode==Mode::Easy ? cfg::EasyLives : 1; }
     void Update(float dt,Vector2 mouse,bool handleInput=true);
     void Draw() const;
     void Shutdown();
@@ -31,7 +35,12 @@ private:
     int windowWidth=cfg::Width,windowHeight=cfg::Height;
     Vector2 windowPosition{};
     bool recordCelebrated=false;
+    bool respawned=false, canRewind=false;
+    float heartPulse=0, readyLock=0;
+    Snake beforeTick; // State before the latest straight move, for instant turns.
     void SetState(State next);
     void Tick();
+    void Respawn();
+    bool TryInstantTurn(Direction next);
     void ToggleFullscreenMode();
 };

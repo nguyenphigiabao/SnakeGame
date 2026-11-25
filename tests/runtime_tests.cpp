@@ -29,6 +29,10 @@ int main() {
         Image image{rlReadScreenPixels(GetRenderWidth(),GetRenderHeight()),GetRenderWidth(),GetRenderHeight(),1,PIXELFORMAT_UNCOMPRESSED_R8G8B8A8};
         check(ExportImage(image,file),file);UnloadImage(image);
     };
+    check(game.state==State::MENU,"game opens on the mode selection screen");
+    frames(20);capture("menu.png");
+    game.Handle(Action::Hard);
+    check(game.state==State::READY&&game.mode==Mode::Hard&&game.lives==1,"hard mode has a single life");
     frames(30);capture("ready.png");
     // Raylib 5.5 automation event type 2 is INPUT_KEY_DOWN. Feed the normal
     // keyboard path and advance one frame at 120 Hz.
@@ -57,6 +61,12 @@ int main() {
     int record=game.best;game.Handle(Action::Restart);
     check(game.state==State::READY&&game.score==0&&game.best==record,"restart retains record");
     game.snake.Queue(Direction::Up);game.Start();frames(28);capture("turn.png");
+    // Instant turn: a key pressed just after the snake left a cell re-plans that move.
+    game.Reset();game.Start();game.Update(1.0f/120,{-100,-100},false);
+    check(game.snake.cells[0]==Cell{5,8},"straight first move");
+    PlayAutomationEvent({0,2,{KEY_UP}});
+    game.Update(1.0f/120,{-100,-100});
+    check(game.snake.cells[0]==Cell{4,7}&&game.snake.direction==Direction::Up,"early turn applies without waiting a tick");
     game.Reset();game.snake.length=cfg::Capacity-1;game.snake.direction=Direction::Left;
     int n=0;
     for(int y=1;y<=cfg::Rows;++y)for(int x=1;x<=cfg::Columns;++x) {
@@ -65,6 +75,16 @@ int main() {
     }
     game.snake.previous=game.snake.cells;game.score=251;game.apple={1,1};game.Start();frames(60);
     check(game.state==State::VICTORY&&game.score==252,"full board reaches Victory");capture("victory.png");
+    game.Handle(Action::Easy);
+    check(game.state==State::READY&&game.mode==Mode::Easy&&game.lives==3,"easy mode starts with three lives");
+    game.Start();frames(400);
+    check(game.lives==2&&game.state==State::READY&&game.score==1,"easy crash costs a life and keeps the score");
+    capture("easy-life-lost.png");
+    frames(90);game.Start();frames(400);game.Start();frames(400);
+    check(game.lives==0&&game.state==State::GAME_OVER,"third crash ends an easy game");
+    game.Handle(Action::Restart);
+    check(game.lives==3&&game.score==0,"restart refills easy lives");
+    game.Handle(Action::Menu);check(game.state==State::MENU,"return to mode selection");
     game.Handle(Action::Mute);game.Handle(Action::Mute);
     game.Shutdown();check(ReadHighScore("runtime-highscore.txt")==252,"runtime persistence");
     UnloadRenderTexture(canvas);CloseWindow();std::remove("runtime-highscore.txt");

@@ -1,11 +1,13 @@
 #include "game.h"
 #include <algorithm>
 int main() {
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
+    // No VSync: on Windows the driver queues 1-3 vsynced frames, which adds
+    // noticeable input lag. A frame cap keeps CPU/GPU use reasonable instead.
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     InitWindow(cfg::Width, cfg::Height, "Snake Game");
     SetWindowMinSize(404,404);
     SetExitKey(KEY_NULL);
-    SetTargetFPS(120);
+    SetTargetFPS(std::max(144, GetMonitorRefreshRate(GetCurrentMonitor())));
     SetMouseScale(1,1);
     RenderTexture2D canvas=LoadRenderTexture(cfg::Width*2,cfg::Height*2);
     Camera2D canvasCamera{{0,0},{0,0},0,2};
